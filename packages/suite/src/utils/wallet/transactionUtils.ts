@@ -586,36 +586,37 @@ const numberSearchFilter = (
     amount: BigNumber,
     operator: typeof searchOperators[number],
 ) => {
-    const targetAmount =
-        transaction.targets[0] !== undefined
-            ? getTargetAmount(transaction.targets[0], transaction)
-            : transaction.amount;
-
-    if (!targetAmount) {
-        return false;
-    }
+    const targetAmounts =
+        transaction.targets.length === 0
+            ? [transaction.amount]
+            : transaction.targets.flatMap(target => getTargetAmount(target, transaction) || []);
 
     const op = getTxOperation(transaction);
     if (!op) {
         return false;
     }
 
-    let bnTargetAmount = new BigNumber(targetAmount);
-    if (op === 'neg') {
-        bnTargetAmount = bnTargetAmount.negated();
-    }
+    return (
+        targetAmounts.filter(targetAmount => {
+            let bnTargetAmount = new BigNumber(targetAmount);
+            if (op === 'neg') {
+                bnTargetAmount = bnTargetAmount.negated();
+            }
 
-    switch (operator) {
-        case '<':
-            return bnTargetAmount.lte(amount);
-        case '>':
-            return bnTargetAmount.gte(amount);
-        case '=':
-            return bnTargetAmount.eq(amount);
-        case '!=':
-            return !bnTargetAmount.eq(amount);
-        // no default
-    }
+            switch (operator) {
+                case '<':
+                    return bnTargetAmount.lte(amount);
+                case '>':
+                    return bnTargetAmount.gte(amount);
+                case '=':
+                    return bnTargetAmount.eq(amount);
+                case '!=':
+                    return !bnTargetAmount.eq(amount);
+                default:
+                    return false;
+            }
+        }).length > 0
+    );
 };
 
 const searchDateRegex = new RegExp(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/);
@@ -685,11 +686,15 @@ export const simpleSearchTransactions = (
     // Searching for an amount (without operator)
     if (!Number.isNaN(search)) {
         const foundTxsForNumber = transactions.flatMap(t => {
-            const targetAmount =
-                t.targets[0] !== undefined ? getTargetAmount(t.targets[0], t) : t.amount;
-            if (!targetAmount || !targetAmount.includes(search)) {
+            const targetAmounts =
+                t.targets.length === 0
+                    ? [t.amount]
+                    : t.targets.flatMap(target => getTargetAmount(target, t) || []);
+
+            if (targetAmounts.filter(targetAmount => targetAmount.includes(search)).length === 0) {
                 return [];
             }
+
             return t.txid;
         });
         txsToSearch.push(...foundTxsForNumber);
