@@ -528,6 +528,18 @@ const definedMessages = defineMessages({
         defaultMessage: 'Float rate offer',
         id: 'TR_EXCHANGE_FLOAT',
     },
+    TR_SELL_STATUS_ERROR: {
+        defaultMessage: 'Rejected',
+        id: 'TR_SELL_STATUS_ERROR',
+    },
+    TR_SELL_STATUS_SUCCESS: {
+        defaultMessage: 'Approved',
+        id: 'TR_SELL_STATUS_SUCCESS',
+    },
+    TR_SELL_STATUS_PENDING: {
+        defaultMessage: 'Pending',
+        id: 'TR_SELL_STATUS_PENDING',
+    },
     TR_BUY_STATUS_PENDING: {
         defaultMessage: 'Pending',
         id: 'TR_BUY_STATUS_PENDING',

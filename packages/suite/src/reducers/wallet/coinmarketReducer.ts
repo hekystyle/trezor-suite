@@ -9,6 +9,8 @@ import {
     ExchangeTrade,
     ExchangeCoinInfo,
     SellVoucherTrade as SpendTrade,
+    SellFiatTradeQuoteRequest,
+    SellFiatTrade,
 } from 'invity-api';
 import { BuyInfo } from '@wallet-actions/coinmarketBuyActions';
 import { ExchangeInfo } from '@wallet-actions/coinmarketExchangeActions';
@@ -35,9 +37,10 @@ type CommonTrade = {
 };
 
 export type TradeBuy = CommonTrade & { tradeType: 'buy'; data: BuyTrade };
+export type TradeSell = CommonTrade & { tradeType: 'sell'; data: SellFiatTrade };
 export type TradeExchange = CommonTrade & { tradeType: 'exchange'; data: ExchangeTrade };
 export type TradeSpend = CommonTrade & { tradeType: 'spend'; data: SpendTrade };
-export type Trade = TradeExchange | TradeBuy | TradeSpend;
+export type Trade = TradeExchange | TradeBuy | TradeSell | TradeSpend;
 
 export interface ComposedTransactionInfo {
     composed?: PrecomposedTransactionFinal;
@@ -73,6 +76,10 @@ interface Exchange {
 interface Sell {
     sellInfo?: SellInfo;
     showLeaveModal: boolean;
+    quotesRequest?: SellFiatTradeQuoteRequest;
+    quotes: SellFiatTrade[];
+    alternativeQuotes?: SellFiatTrade[];
+    transactionId?: string;
 }
 
 interface State {
@@ -111,6 +118,10 @@ export const initialState = {
     sell: {
         showLeaveModal: false,
         sellInfo: undefined,
+        quotesRequest: undefined,
+        quotes: [],
+        alternativeQuotes: [],
+        transactionId: undefined,
     },
     composedTransactionInfo: {},
     trades: [],

@@ -1,1 +1,1 @@
-export type TradeType = 'buy' | 'exchange' | 'spend';
+export type TradeType = 'buy' | 'sell' | 'exchange' | 'spend';
