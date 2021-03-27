@@ -10,12 +10,15 @@ import * as suiteActions from '@suite-actions/suiteActions';
 import { serializeDiscovery, serializeDevice } from '@suite-utils/storage';
 import { deviceGraphDataFilterFn } from '@wallet-utils/graphUtils';
 import { FormState } from '@wallet-types/sendForm';
-import { BuyTrade, ExchangeTrade } from 'invity-api';
+import type { TradeType } from '@wallet-types/coinmarketCommonTypes';
+import { BuyTrade, ExchangeTrade, SellVoucherTrade as SpendTrade } from 'invity-api';
 
 export type StorageAction =
     | { type: typeof STORAGE.LOAD }
     | { type: typeof STORAGE.LOADED; payload: AppState }
     | { type: typeof STORAGE.ERROR; error: any };
+
+export type Trade = BuyTrade & ExchangeTrade & SpendTrade;
 
 const isDBAccessible = async () => {
     const isSupported = await db.isSupported();
@@ -101,40 +104,21 @@ interface AccountPart {
     descriptor: Account['descriptor'];
 }
 
-export const saveBuyTrade = async (buyTrade: BuyTrade, account: AccountPart, date: string) => {
-    if (!(await isDBAccessible())) return;
-    return db.addItem(
-        'coinmarketTrades',
-        {
-            key: buyTrade.paymentId,
-            tradeType: 'buy',
-            date,
-            data: buyTrade,
-            account: {
-                descriptor: account.descriptor,
-                symbol: account.symbol,
-                accountType: account.accountType,
-                accountIndex: account.accountIndex,
-            },
-        },
-        undefined,
-        true,
-    );
-};
-
-export const saveExchangeTrade = async (
-    exchangeTrade: ExchangeTrade,
+export const saveCoinmarketTrade = async (
+    trade: Trade,
     account: AccountPart,
     date: string,
+    tradeType: TradeType,
+    key?: string,
 ) => {
     if (!(await isDBAccessible())) return;
     return db.addItem(
         'coinmarketTrades',
         {
-            key: exchangeTrade.orderId,
-            tradeType: 'exchange',
+            key,
+            tradeType,
             date,
-            data: exchangeTrade,
+            data: trade,
             account: {
                 descriptor: account.descriptor,
                 symbol: account.symbol,

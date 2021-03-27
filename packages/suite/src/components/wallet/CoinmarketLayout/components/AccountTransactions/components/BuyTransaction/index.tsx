@@ -6,7 +6,7 @@ import { useWatchBuyTrade } from '@wallet-hooks/useCoinmarket';
 import * as routerActions from '@suite-actions/routerActions';
 import * as coinmarketBuyActions from '@wallet-actions/coinmarketBuyActions';
 import { useTheme, variables, Icon, Button } from '@trezor/components';
-import { CoinmarketPaymentType, CoinmarketBuyProviderInfo } from '@wallet-components';
+import { CoinmarketPaymentType, CoinmarketProviderInfo } from '@wallet-components';
 import { Account } from '@wallet-types';
 import { Translation, HiddenPlaceholder, FormattedDate } from '@suite-components';
 import { getStatusMessage, processQuotes } from '@wallet-utils/coinmarket/buyUtils';
@@ -207,7 +207,7 @@ const BuyTransaction = ({ trade, providers, account }: Props) => {
             </Column>
             <ProviderColumn>
                 <Row>
-                    <CoinmarketBuyProviderInfo exchange={exchange} providers={providers} />
+                    <CoinmarketProviderInfo exchange={exchange} providers={providers} />
                 </Row>
                 <RowSecond>
                     <CoinmarketPaymentType method={paymentMethod} />

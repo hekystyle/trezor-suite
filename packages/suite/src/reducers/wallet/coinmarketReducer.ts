@@ -8,6 +8,7 @@ import {
     ExchangeTradeQuoteRequest,
     ExchangeTrade,
     ExchangeCoinInfo,
+    SellVoucherTrade as SpendTrade,
 } from 'invity-api';
 import { BuyInfo } from '@wallet-actions/coinmarketBuyActions';
 import { ExchangeInfo } from '@wallet-actions/coinmarketExchangeActions';
@@ -35,7 +36,8 @@ type CommonTrade = {
 
 export type TradeBuy = CommonTrade & { tradeType: 'buy'; data: BuyTrade };
 export type TradeExchange = CommonTrade & { tradeType: 'exchange'; data: ExchangeTrade };
-export type Trade = TradeExchange | TradeBuy;
+export type TradeSpend = CommonTrade & { tradeType: 'spend'; data: SpendTrade };
+export type Trade = TradeExchange | TradeBuy | TradeSpend;
 
 export interface ComposedTransactionInfo {
     composed?: PrecomposedTransactionFinal;
@@ -150,8 +152,7 @@ const coinmarketReducer = (
             case COINMARKET_BUY.DISPOSE:
                 draft.buy.addressVerified = undefined;
                 break;
-            case COINMARKET_EXCHANGE.SAVE_TRADE:
-            case COINMARKET_BUY.SAVE_TRADE:
+            case COINMARKET_COMMON.SAVE_TRADE:
                 if (action.key) {
                     const trades = state.trades.filter(t => t.key !== action.key);
                     const { type, ...trade } = action;
