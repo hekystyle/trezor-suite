@@ -1,12 +1,12 @@
 import React from 'react';
 import { Button, Select, variables, Flag } from '@trezor/components';
 import regional from '@wallet-constants/coinmarket/regional';
-import { useCoinmarketBuyFormContext } from '@wallet-hooks/useCoinmarketBuyForm';
+import { useCoinmarketSellFormContext } from '@wallet-hooks/useCoinmarketSellForm';
 import { getCountryLabelParts } from '@wallet-utils/coinmarket/coinmarketUtils';
-import { CountryOption } from '@wallet-types/coinmarketCommonTypes';
 import { Translation } from '@suite-components';
 import { Controller } from 'react-hook-form';
 import styled from 'styled-components';
+import { CountryOption } from '@wallet-types/coinmarketCommonTypes';
 
 const Wrapper = styled.div`
     display: flex;
@@ -82,12 +82,11 @@ const Footer = () => {
         watch,
         setAmountLimits,
         defaultCountry,
-        accountHasCachedRequest,
         quotesRequest,
-    } = useCoinmarketBuyFormContext();
+    } = useCoinmarketSellFormContext();
     const countrySelect = 'countrySelect';
     const hasValues =
-        (watch('fiatInput') || watch('cryptoInput')) && !!watch('currencySelect').value;
+        (watch('fiatInput') || watch('cryptoInput')) && !!watch('fiatCurrencySelect').value;
     // used instead of formState.isValid, which is sometimes returning false even if there are no errors
     const formIsValid = Object.keys(errors).length === 0;
 
@@ -95,12 +94,12 @@ const Footer = () => {
         <Wrapper>
             <Left>
                 <Label>
-                    <Translation id="TR_BUY_OFFERS_FOR" />
+                    <Translation id="TR_SELL_OFFERS_FOR" />
                 </Label>
                 <Controller
                     control={control}
                     defaultValue={
-                        accountHasCachedRequest && quotesRequest?.country
+                        quotesRequest?.country
                             ? {
                                   label: regional.countriesMap.get(quotesRequest.country),
                                   value: quotesRequest.country,
@@ -150,7 +149,7 @@ const Footer = () => {
                     isLoading={formState.isSubmitting}
                     type="submit"
                 >
-                    <Translation id="TR_BUY_SHOW_OFFERS" />
+                    <Translation id="TR_SELL_SHOW_OFFERS" />
                 </StyledButton>
             </Right>
         </Wrapper>

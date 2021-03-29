@@ -11,6 +11,8 @@ import { COINMARKET_COMMON, COINMARKET_SELL } from './constants';
 export interface SellInfo {
     sellList?: SellListResponse;
     providerInfos: { [name: string]: SellProviderInfo };
+    supportedFiatCurrencies: Set<string>;
+    supportedCryptoCurrencies: Set<string>;
 }
 
 export type CoinmarketSellAction =
@@ -45,9 +47,22 @@ export const loadSellInfo = async (): Promise<SellInfo> => {
         sellList.providers.forEach(e => (providerInfos[e.name] = e));
     }
 
+    const tradedFiatCurrencies: string[] = [];
+    const tradedCoins: string[] = [];
+    sellList?.providers.forEach(p => {
+        if (p.tradedFiatCurrencies) {
+            tradedFiatCurrencies.push(...p.tradedFiatCurrencies.map(c => c.toLowerCase()));
+        }
+        tradedCoins.push(...p.tradedCoins.map(c => c.toLowerCase()));
+    });
+    const supportedFiatCurrencies = new Set(tradedFiatCurrencies);
+    const supportedCryptoCurrencies = new Set(tradedCoins);
+
     return {
         sellList,
         providerInfos,
+        supportedFiatCurrencies,
+        supportedCryptoCurrencies,
     };
 };
 

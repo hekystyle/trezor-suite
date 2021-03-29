@@ -540,6 +540,46 @@ const definedMessages = defineMessages({
         defaultMessage: 'Pending',
         id: 'TR_SELL_STATUS_PENDING',
     },
+    TR_SELL_LOADING: {
+        defaultMessage: 'Sell',
+        id: 'TR_SELL_LOADING',
+    },
+    TR_SELL_NO_PROVIDERS: {
+        defaultMessage: 'No providers',
+        id: 'TR_SELL_NO_PROVIDERS',
+    },
+    TR_SELL_OFFERS_FOR: {
+        defaultMessage: 'Offers for',
+        id: 'TR_SELL_OFFERS_FOR',
+    },
+    TR_SELL_SHOW_OFFERS: {
+        defaultMessage: 'Show offers',
+        id: 'TR_SELL_SHOW_OFFERS',
+    },
+    TR_SELL_VALIDATION_ERROR_EMPTY: {
+        defaultMessage: 'Required',
+        id: 'TR_SELL_VALIDATION_ERROR_EMPTY',
+    },
+    TR_SELL_VALIDATION_ERROR_MINIMUM_CRYPTO: {
+        defaultMessage: 'Minimum is {minimum} {currency}',
+        id: 'TR_SELL_VALIDATION_ERROR_MINIMUM_CRYPTO',
+    },
+    TR_SELL_VALIDATION_ERROR_MAXIMUM_CRYPTO: {
+        defaultMessage: 'Maximum is {maximum} {currency}',
+        id: 'TR_SELL_VALIDATION_ERROR_MAXIMUM_CRYPTO',
+    },
+    TR_SELL_VALIDATION_ERROR_MINIMUM_FIAT: {
+        defaultMessage: 'Minimum is {minimum} {currency}',
+        id: 'TR_SELL_VALIDATION_ERROR_MINIMUM_FIAT',
+    },
+    TR_SELL_VALIDATION_ERROR_MAXIMUM_FIAT: {
+        defaultMessage: 'Maximum is {maximum} {currency}',
+        id: 'TR_SELL_VALIDATION_ERROR_MAXIMUM_FIAT',
+    },
+    TR_SELL_ALL: {
+        defaultMessage: 'All',
+        id: 'TR_SELL_ALL',
+    },
     TR_BUY_STATUS_PENDING: {
         defaultMessage: 'Pending',
         id: 'TR_BUY_STATUS_PENDING',

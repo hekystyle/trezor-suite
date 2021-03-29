@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Account } from '@wallet-types';
-import { AmountLimits } from '@wallet-types/coinmarketBuyForm';
+import { AmountLimits } from '@wallet-types/coinmarketSellForm';
 import { SellFiatTrade, SellFiatTradeQuoteRequest, SellTradeStatus } from 'invity-api';
 import { getLocationOrigin, isDesktop } from '@suite-utils/env';
 
@@ -49,21 +49,17 @@ export function getAmountLimits(
 }
 
 // split the quotes to base and alternative and assign order and payment ids
-export function processQuotes(
-    allQuotes: SellFiatTrade[],
-): [SellFiatTrade[] | undefined, SellFiatTrade[] | undefined] {
-    if (allQuotes) {
-        allQuotes.forEach(q => {
-            q.orderId = uuidv4();
-            q.paymentId = uuidv4();
-        });
-        const quotes = allQuotes.filter(q => !q.tags || !q.tags.includes('alternativeCurrency'));
-        const alternativeQuotes = allQuotes.filter(
-            q => q.tags && q.tags.includes('alternativeCurrency') && !q.error,
-        );
-        return [quotes, alternativeQuotes];
-    }
-    return [undefined, undefined];
+export function processQuotes(allQuotes: SellFiatTrade[]): [SellFiatTrade[], SellFiatTrade[]] {
+    if (!allQuotes) allQuotes = [];
+    allQuotes.forEach(q => {
+        q.orderId = uuidv4();
+        q.paymentId = uuidv4();
+    });
+    const quotes = allQuotes.filter(q => !q.tags || !q.tags.includes('alternativeCurrency'));
+    const alternativeQuotes = allQuotes.filter(
+        q => q.tags && q.tags.includes('alternativeCurrency') && !q.error,
+    );
+    return [quotes, alternativeQuotes];
 }
 
 export const createQuoteLink = async (request: SellFiatTradeQuoteRequest, account: Account) => {

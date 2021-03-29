@@ -6,14 +6,13 @@ import { SellFiatTrade, SellFiatTradeQuoteRequest, ExchangeCoinInfo } from 'invi
 import { CoinmarketSellAction, SellInfo } from '@wallet-actions/coinmarketSellActions';
 import { TypedValidationRules } from './form';
 import { FeeInfo, FormState, PrecomposedLevels } from '@wallet-types/sendForm';
+import { Option, DefaultCountryOption } from './coinmarketCommonTypes';
 
-export const CRYPTO_INPUT = 'outputs[0].amount';
-export const CRYPTO_TOKEN = 'outputs[0].token';
-export const FIAT_INPUT = 'outputs[0].fiat';
-export const FIAT_CURRENCY = 'outputs[0].currency';
-
-export type Option = { value: string; label: string };
-export type defaultCountryOption = { value: string; label?: string };
+export const OUTPUT_AMOUNT = 'outputs[0].amount';
+export const FIAT_INPUT = 'fiatInput';
+export const FIAT_CURRENCY_SELECT = 'fiatCurrencySelect';
+export const CRYPTO_INPUT = 'cryptoInput';
+export const CRYPTO_CURRENCY_SELECT = 'cryptoCurrencySelect';
 
 export interface ComponentProps {
     selectedAccount: AppState['wallet']['selectedAccount'];
@@ -30,28 +29,33 @@ export interface Props extends ComponentProps {
 }
 
 export type SellFormState = FormState & {
-    receiveCryptoSelect: Option;
-    sendCryptoSelect: Option;
+    fiatInput?: string;
+    fiatCurrencySelect: Option;
+    cryptoInput?: string;
+    cryptoCurrencySelect: Option;
+    countrySelect: Option;
 };
 
 export interface AmountLimits {
     currency: string;
-    min?: number;
-    max?: number;
+    minCrypto?: number;
+    minFiat?: number;
+    maxCrypto?: number;
+    maxFiat?: number;
 }
 
 export type SellFormContextValues = Omit<UseFormMethods<SellFormState>, 'register'> & {
     register: (rules?: TypedValidationRules) => (ref: any) => void;
     onSubmit: () => void;
     account: Account;
+    defaultCountry: DefaultCountryOption;
+    defaultCurrency: Option;
     isComposing: boolean;
     changeFeeLevel: (level: FeeLevel['label']) => void;
     sellInfo?: SellInfo;
-    sellCoinInfo?: ExchangeCoinInfo[];
+    exchangeCoinInfo?: ExchangeCoinInfo[];
     localCurrencyOption: { label: string; value: string };
     composeRequest: (field?: string) => void;
-    updateFiatCurrency: (selectedCurrency: { value: string; label: string }) => void;
-    updateSendCryptoValue: (fiatValue: string, decimals: number) => void;
     saveQuoteRequest: (request: SellFiatTradeQuoteRequest) => CoinmarketSellAction;
     saveQuotes: (
         fixedQuotes: SellFiatTrade[],
@@ -64,7 +68,6 @@ export type SellFormContextValues = Omit<UseFormMethods<SellFormState>, 'registe
     setAmountLimits: (limits?: AmountLimits) => void;
     quotesRequest: AppState['wallet']['coinmarket']['sell']['quotesRequest'];
     isLoading: boolean;
-    updateFiatValue: (amount: string) => void;
     noProviders: boolean;
     network: Network;
     feeInfo: FeeInfo;
