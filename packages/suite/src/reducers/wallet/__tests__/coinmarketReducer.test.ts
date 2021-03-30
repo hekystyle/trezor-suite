@@ -1,6 +1,11 @@
 import reducer, { initialState, TradeBuy, TradeExchange } from '@wallet-reducers/coinmarketReducer';
 import { STORAGE } from '@suite-actions/constants';
-import { COINMARKET_BUY, COINMARKET_COMMON, COINMARKET_EXCHANGE } from '@wallet-actions/constants';
+import {
+    COINMARKET_BUY,
+    COINMARKET_COMMON,
+    COINMARKET_EXCHANGE,
+    COINMARKET_SELL,
+} from '@wallet-actions/constants';
 import {
     BuyTrade,
     BuyTradeQuoteRequest,
@@ -293,5 +298,14 @@ describe('settings reducer', () => {
             ...initialState,
             trades: [tradeBuy, updatedTradeExchange],
         });
+    });
+
+    it('COINMARKET_SELL.SET_IS_FROM_REDIRECT', () => {
+        expect(
+            reducer(undefined, {
+                type: COINMARKET_SELL.SET_IS_FROM_REDIRECT,
+                isFromRedirect: true,
+            } as any),
+        ).toEqual({ ...initialState, sell: { ...initialState.sell, isFromRedirect: true } });
     });
 });

@@ -1,8 +1,6 @@
 import { createContext, useContext, useCallback, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import TrezorConnect from 'trezor-connect';
 import { SellFiatTradeQuoteRequest } from 'invity-api';
-import { NETWORKS } from '@wallet-config';
 import { useActions } from '@suite-hooks';
 import invityAPI from '@suite-services/invityAPI';
 import regional from '@wallet-constants/coinmarket/regional';
@@ -23,6 +21,7 @@ import {
     OUTPUT_AMOUNT,
     FIAT_CURRENCY_SELECT,
 } from '@wallet-types/coinmarketSellForm';
+import { getComposeAddressPlaceholder } from '@wallet-utils/coinmarket/coinmarketUtils';
 import { getAmountLimits, processQuotes } from '@wallet-utils/coinmarket/sellUtils';
 import { useFees } from './form/useFees';
 import { useCompose } from './form/useCompose';
@@ -81,49 +80,8 @@ export const useCoinmarketSellForm = (props: Props): SellFormContextValues => {
     // throttle initial state calculation
     const initState = useSellState(props, !!state);
     useEffect(() => {
-        const getComposeAddressPlaceholder = async () => {
-            // the address is later replaced by the address of the sell
-            // as a precaution, use user's own address as a placeholder
-            const { networkType } = account;
-            switch (networkType) {
-                case 'bitcoin': {
-                    // use legacy (the most expensive) address for fee calculation
-                    // as we do not know what address type the sell will use
-                    const legacy =
-                        NETWORKS.find(
-                            network =>
-                                network.symbol === account.symbol &&
-                                network.accountType === 'legacy',
-                        ) ||
-                        NETWORKS.find(
-                            network =>
-                                network.symbol === account.symbol &&
-                                network.accountType === 'segwit',
-                        ) ||
-                        network;
-                    if (legacy && device) {
-                        const result = await TrezorConnect.getAddress({
-                            device,
-                            coin: legacy.symbol,
-                            path: `${legacy.bip44.replace('i', '0')}/0/0`,
-                            useEmptyPassphrase: device.useEmptyPassphrase,
-                            showOnTrezor: false,
-                        });
-                        if (result.success) {
-                            return result.payload.address;
-                        }
-                    }
-                    // as a fallback, use the change address of current account
-                    return account.addresses?.change[0].address;
-                }
-                case 'ethereum':
-                case 'ripple':
-                    return account.descriptor;
-                // no default
-            }
-        };
         const setStateAsync = async (initState: ReturnType<typeof useSellState>) => {
-            const address = await getComposeAddressPlaceholder();
+            const address = await getComposeAddressPlaceholder(account, network, device);
             if (initState && address) {
                 initState.formValues.outputs[0].address = address;
                 setState(initState);
@@ -151,7 +109,9 @@ export const useCoinmarketSellForm = (props: Props): SellFormContextValues => {
 
     // react-hook-form reset, set default values
     useEffect(() => {
-        reset(state?.formValues);
+        if (state) {
+            reset(state?.formValues);
+        }
     }, [reset, state]);
 
     const { isLoading: isComposing, composeRequest, composedLevels, onFeeLevelChange } = useCompose(
@@ -177,7 +137,7 @@ export const useCoinmarketSellForm = (props: Props): SellFormContextValues => {
     });
 
     const typedRegister = useCallback(<T>(rules?: T) => register(rules), [register]);
-    const isLoading = !sellInfo?.sellList;
+    const isLoading = !sellInfo?.sellList || !state?.formValues.outputs[0].address;
     const noProviders =
         sellInfo?.sellList?.providers.length === 0 ||
         !sellInfo?.supportedCryptoCurrencies.has(account.symbol);

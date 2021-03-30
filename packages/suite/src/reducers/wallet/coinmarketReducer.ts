@@ -80,6 +80,7 @@ interface Sell {
     quotes: SellFiatTrade[];
     alternativeQuotes?: SellFiatTrade[];
     transactionId?: string;
+    isFromRedirect: boolean;
 }
 
 interface State {
@@ -122,6 +123,7 @@ export const initialState = {
         quotes: [],
         alternativeQuotes: [],
         transactionId: undefined,
+        isFromRedirect: false,
     },
     composedTransactionInfo: {},
     trades: [],
@@ -200,6 +202,9 @@ const coinmarketReducer = (
                 break;
             case COINMARKET_SELL.SHOW_LEAVE_MODAL:
                 draft.sell.showLeaveModal = action.showLeaveModal;
+                break;
+            case COINMARKET_SELL.SET_IS_FROM_REDIRECT:
+                draft.sell.isFromRedirect = action.isFromRedirect;
                 break;
             // no default
         }

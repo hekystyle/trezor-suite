@@ -5,6 +5,8 @@ import {
     SellListResponse,
     SellProviderInfo,
 } from 'invity-api';
+import { Dispatch } from '@suite-types';
+import * as modalActions from '@suite-actions/modalActions';
 import invityAPI from '@suite-services/invityAPI';
 import { COINMARKET_COMMON, COINMARKET_SELL } from './constants';
 
@@ -20,6 +22,7 @@ export type CoinmarketSellAction =
     | { type: typeof COINMARKET_SELL.SHOW_LEAVE_MODAL; showLeaveModal: boolean }
     | { type: typeof COINMARKET_SELL.SAVE_QUOTE_REQUEST; request: SellFiatTradeQuoteRequest }
     | { type: typeof COINMARKET_SELL.SAVE_TRANSACTION_ID; transactionId: string }
+    | { type: typeof COINMARKET_SELL.SET_IS_FROM_REDIRECT; isFromRedirect: boolean }
     | {
           type: typeof COINMARKET_SELL.SAVE_QUOTES;
           quotes: SellFiatTrade[];
@@ -112,3 +115,14 @@ export const saveQuotes = (
     quotes,
     alternativeQuotes,
 });
+
+export const setIsFromRedirect = (isFromRedirect: boolean): CoinmarketSellAction => ({
+    type: COINMARKET_SELL.SET_IS_FROM_REDIRECT,
+    isFromRedirect,
+});
+
+// this is only a wrapper for `openDeferredModal` since it doesn't work with `bindActionCreators`
+// used in useCoinmarketSellOffers
+export const openCoinmarketSellConfirmModal = (provider?: string) => (dispatch: Dispatch) => {
+    return dispatch(modalActions.openDeferredModal({ type: 'coinmarket-sell-terms', provider }));
+};

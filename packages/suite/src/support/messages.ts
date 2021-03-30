@@ -580,6 +580,43 @@ const definedMessages = defineMessages({
         defaultMessage: 'All',
         id: 'TR_SELL_ALL',
     },
+    TR_SELL_FOR_YOUR_SAFETY: {
+        defaultMessage: 'For your safety',
+        id: 'TR_SELL_FOR_YOUR_SAFETY',
+    },
+    TR_SELL_I_UNDERSTAND: {
+        defaultMessage: 'I understand and agree to all of the above',
+        id: 'TR_SELL_I_UNDERSTAND',
+    },
+    TR_SELL_CONFIRM: {
+        defaultMessage: 'Confirm',
+        id: 'TR_SELL_CONFIRM',
+    },
+    TR_SELL_TERMS_1: {
+        defaultMessage:
+            "I'm here to sell cryptocurrency. If you were directed to this site for any other reason, please contact {provider} support before proceeding.",
+        id: 'TR_SELL_TERMS_1',
+    },
+    TR_SELL_TERMS_2: {
+        defaultMessage:
+            "I'm using Invity to purchase funds that will be sent to an account under my direct personal control.",
+        id: 'TR_SELL_TERMS_2',
+    },
+    TR_SELL_TERMS_3: {
+        defaultMessage:
+            "I'm not using Invity for gambling or any other violation of Invity’s Terms of service.",
+        id: 'TR_SELL_TERMS_3',
+    },
+    TR_SELL_TERMS_4: {
+        defaultMessage:
+            'I understand that cryptocurrencies are an emerging financial tool and that regulations may be limited in some areas. This may put me at a higher risk of fraud, theft, or market instability.',
+        id: 'TR_SELL_TERMS_4',
+    },
+    TR_SELL_TERMS_5: {
+        defaultMessage:
+            'I understand that cryptocurrency transactions are irreversible and I won’t be able to receive a refund for my purchase.',
+        id: 'TR_SELL_TERMS_5',
+    },
     TR_BUY_STATUS_PENDING: {
         defaultMessage: 'Pending',
         id: 'TR_BUY_STATUS_PENDING',
