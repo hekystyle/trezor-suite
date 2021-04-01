@@ -1,6 +1,6 @@
 import { AppState } from '@suite-types';
 import { Account } from '@wallet-types';
-import { SellFiatTrade } from 'invity-api';
+import { BankAccount, SellFiatTrade } from 'invity-api';
 import { Timer } from '@suite-hooks/useTimeInterval';
 import { CoinmarketSellAction, SellInfo } from '@wallet-actions/coinmarketSellActions';
 
@@ -32,11 +32,9 @@ export type ContextValues = {
     sellStep: SellStep;
     setSellStep: (step: SellStep) => void;
     selectQuote: (quote: SellFiatTrade) => void;
-    receiveSymbol?: string;
-    receiveAccount?: Account;
-    setReceiveAccount: (account?: Account) => void;
     saveTrade: (sellTrade: SellFiatTrade, account: Account, date: string) => CoinmarketSellAction;
-    confirmTrade: (address: string, extraField?: string) => void;
+    addBankAccount: () => void;
+    confirmTrade: (bankAccount: BankAccount) => void;
     sendTransaction: () => void;
     REFETCH_INTERVAL_IN_SECONDS: number;
     timer: Timer;

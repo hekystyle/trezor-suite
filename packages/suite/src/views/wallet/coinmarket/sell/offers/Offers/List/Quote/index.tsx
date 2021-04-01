@@ -3,14 +3,14 @@ import styled from 'styled-components';
 import { useTheme, Button, variables, Icon } from '@trezor/components';
 import { CoinmarketPaymentType, CoinmarketProviderInfo } from '@wallet-components';
 import { QuestionTooltip, Translation } from '@suite-components';
-import { BuyTrade } from 'invity-api';
-import { useCoinmarketBuyOffersContext } from '@wallet-hooks/useCoinmarketBuyOffers';
+import { SellFiatTrade } from 'invity-api';
+import { useCoinmarketSellOffersContext } from '@wallet-hooks/useCoinmarketSellOffers';
 import { formatCryptoAmount } from '@wallet-utils/coinmarket/coinmarketUtils';
 
 interface Props {
     className?: string;
-    quote: BuyTrade;
-    wantCrypto: boolean;
+    quote: SellFiatTrade;
+    amountInCrypto: boolean;
 }
 
 const Wrapper = styled.div`
@@ -139,29 +139,29 @@ const StyledQuestionTooltip = styled(QuestionTooltip)`
     color: ${props => props.theme.TYPE_LIGHT_GREY};
 `;
 
-export function getQuoteError(quote: BuyTrade, wantCrypto: boolean) {
+export function getQuoteError(quote: SellFiatTrade, amountInCrypto: boolean) {
     if (quote.error) {
-        if (wantCrypto) {
-            if (quote.minCrypto && Number(quote.receiveStringAmount) < quote.minCrypto) {
+        if (amountInCrypto) {
+            if (quote.minCrypto && Number(quote.cryptoStringAmount) < quote.minCrypto) {
                 return (
                     <Translation
                         id="TR_OFFER_ERROR_MINIMUM_CRYPTO"
                         values={{
-                            amount: formatCryptoAmount(Number(quote.receiveStringAmount)),
+                            amount: formatCryptoAmount(Number(quote.cryptoStringAmount)),
                             min: formatCryptoAmount(quote.minCrypto),
-                            currency: quote.receiveCurrency,
+                            currency: quote.cryptoCurrency,
                         }}
                     />
                 );
             }
-            if (quote.maxCrypto && Number(quote.receiveStringAmount) > quote.maxCrypto) {
+            if (quote.maxCrypto && Number(quote.cryptoStringAmount) > quote.maxCrypto) {
                 return (
                     <Translation
                         id="TR_OFFER_ERROR_MAXIMUM_CRYPTO"
                         values={{
-                            amount: formatCryptoAmount(Number(quote.receiveStringAmount)),
+                            amount: formatCryptoAmount(Number(quote.cryptoStringAmount)),
                             max: formatCryptoAmount(quote.maxCrypto),
-                            currency: quote.receiveCurrency,
+                            currency: quote.cryptoCurrency,
                         }}
                     />
                 );
@@ -197,9 +197,9 @@ export function getQuoteError(quote: BuyTrade, wantCrypto: boolean) {
     return '';
 }
 
-const Quote = ({ className, quote, wantCrypto }: Props) => {
+const Quote = ({ className, quote, amountInCrypto }: Props) => {
     const theme = useTheme();
-    const { selectQuote, providersInfo } = useCoinmarketBuyOffersContext();
+    const { selectQuote, sellInfo } = useCoinmarketSellOffersContext();
     // TODO - tags are not yet fully supported by the API server
     // in the future will be taken from quote.tags, will need some algorithm to evaluate them and show only one
     const hasTag = false;
@@ -212,31 +212,34 @@ const Quote = ({ className, quote, wantCrypto }: Props) => {
                 {error && <Left>N/A</Left>}
                 {!error && (
                     <Left>
-                        {wantCrypto
+                        {amountInCrypto
                             ? `${quote.fiatStringAmount} ${quote.fiatCurrency}`
-                            : `${formatCryptoAmount(Number(quote.receiveStringAmount))} ${
-                                  quote.receiveCurrency
+                            : `${formatCryptoAmount(Number(quote.cryptoStringAmount))} ${
+                                  quote.cryptoCurrency
                               }`}
                     </Left>
                 )}
                 <Right>
                     <StyledButton isDisabled={!!quote.error} onClick={() => selectQuote(quote)}>
-                        <Translation id="TR_BUY_GET_THIS_OFFER" />
+                        <Translation id="TR_SELL_GET_THIS_OFFER" />
                     </StyledButton>
                 </Right>
             </Main>
             <Details>
                 <Column>
                     <Heading>
-                        <Translation id="TR_BUY_PROVIDER" />
+                        <Translation id="TR_SELL_PROVIDER" />
                     </Heading>
                     <Value>
-                        <CoinmarketProviderInfo exchange={exchange} providers={providersInfo} />
+                        <CoinmarketProviderInfo
+                            exchange={exchange}
+                            providers={sellInfo?.providerInfos}
+                        />
                     </Value>
                 </Column>
                 <Column>
                     <Heading>
-                        <Translation id="TR_BUY_PAID_BY" />
+                        <Translation id="TR_SELL_PAID_BY" />
                     </Heading>
                     <Value>
                         <CoinmarketPaymentType method={paymentMethod} />
@@ -244,11 +247,11 @@ const Quote = ({ className, quote, wantCrypto }: Props) => {
                 </Column>
                 <Column>
                     <Heading>
-                        <Translation id="TR_BUY_FEES" />{' '}
+                        <Translation id="TR_SELL_FEES" />{' '}
                         <StyledQuestionTooltip tooltip="TR_OFFER_FEE_INFO" />
                     </Heading>
                     <Value>
-                        <Translation id="TR_BUY_ALL_FEES_INCLUDED" />
+                        <Translation id="TR_SELL_ALL_FEES_INCLUDED" />
                     </Value>
                 </Column>
             </Details>
@@ -257,7 +260,7 @@ const Quote = ({ className, quote, wantCrypto }: Props) => {
                     <IconWrapper>
                         <StyledIcon icon="CROSS" size={12} color={theme.TYPE_RED} />
                     </IconWrapper>
-                    <ErrorText>{getQuoteError(quote, wantCrypto)}</ErrorText>
+                    <ErrorText>{getQuoteError(quote, amountInCrypto)}</ErrorText>
                 </ErrorFooter>
             )}
 

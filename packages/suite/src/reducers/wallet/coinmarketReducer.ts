@@ -200,6 +200,13 @@ const coinmarketReducer = (
             case COINMARKET_SELL.SAVE_SELL_INFO:
                 draft.sell.sellInfo = action.sellInfo;
                 break;
+            case COINMARKET_SELL.SAVE_QUOTE_REQUEST:
+                draft.sell.quotesRequest = action.request;
+                break;
+            case COINMARKET_SELL.SAVE_QUOTES:
+                draft.sell.quotes = action.quotes;
+                draft.sell.alternativeQuotes = action.alternativeQuotes;
+                break;
             case COINMARKET_SELL.SHOW_LEAVE_MODAL:
                 draft.sell.showLeaveModal = action.showLeaveModal;
                 break;

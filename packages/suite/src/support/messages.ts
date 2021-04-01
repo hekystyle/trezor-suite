@@ -279,16 +279,6 @@ const definedMessages = defineMessages({
         defaultMessage: 'Sorry, none of our partners can provide an offer at this time.',
         id: 'TR_EXCHANGE_NO_OFFERS',
     },
-    TR_EXCHANGE_OFFER_ERROR_MINIMUM: {
-        defaultMessage:
-            'The chosen amount of {currency} {amount} is lower than the accepted minimum of {currency} {min}.',
-        id: 'TR_BUY_OFFER_ERROR_MINIMUM_CRYPTO',
-    },
-    TR_EXCHANGE_OFFER_ERROR_MAXIMUM: {
-        defaultMessage:
-            'The chosen amount of {currency} {amount} is higher than the accepted maximum of {currency} {max}.',
-        id: 'TR_BUY_OFFER_ERROR_MAXIMUM_CRYPTO',
-    },
     TR_EXCHANGE_FOR_YOUR_SAFETY: {
         defaultMessage: 'For your safety',
         id: 'TR_EXCHANGE_FOR_YOUR_SAFETY',
@@ -541,7 +531,7 @@ const definedMessages = defineMessages({
         id: 'TR_SELL_STATUS_PENDING',
     },
     TR_SELL_LOADING: {
-        defaultMessage: 'Sell',
+        defaultMessage: 'Loading',
         id: 'TR_SELL_LOADING',
     },
     TR_SELL_NO_PROVIDERS: {
@@ -616,6 +606,94 @@ const definedMessages = defineMessages({
         defaultMessage:
             'I understand that cryptocurrency transactions are irreversible and I won’t be able to receive a refund for my purchase.',
         id: 'TR_SELL_TERMS_5',
+    },
+    TR_SELL_OTHER_OFFERS_IN: {
+        defaultMessage: 'Other Offers in',
+        id: 'TR_SELL_OTHER_OFFERS_IN',
+    },
+    TR_SELL_NO_OFFERS: {
+        defaultMessage: 'Sorry, none of our partners can provide an offer at this time.',
+        id: 'TR_SELL_NO_OFFERS',
+    },
+    TR_SELL_OFFERS_REFRESH: {
+        defaultMessage: 'Refresh in',
+        id: 'TR_SELL_OFFERS_REFRESH',
+    },
+    TR_SELL_GET_THIS_OFFER: {
+        id: 'TR_SELL_GET_THIS_OFFER',
+        defaultMessage: 'Get this Offer',
+    },
+    TR_SELL_PROVIDER: {
+        defaultMessage: 'provider',
+        id: 'TR_SELL_PROVIDER',
+    },
+    TR_SELL_FEES: {
+        defaultMessage: 'Fees',
+        id: 'TR_SELL_FEES',
+    },
+    TR_SELL_PAID_BY: {
+        defaultMessage: 'paid by',
+        id: 'TR_SELL_PAID_BY',
+    },
+    TR_SELL_ALL_FEES_INCLUDED: {
+        defaultMessage: 'All fees included',
+        id: 'TR_SELL_ALL_FEES_INCLUDED',
+    },
+    TR_SELL_SPEND: {
+        defaultMessage: 'spend',
+        id: 'TR_SELL_SPEND',
+    },
+    TR_SELL_RECEIVE: {
+        defaultMessage: 'receive',
+        id: 'TR_SELL_RECEIVE',
+    },
+    TR_SELL_BANK_ACCOUNT_STEP: {
+        defaultMessage: 'Bank Accounts',
+        id: 'TR_SELL_BANK_ACCOUNT_STEP',
+    },
+    TR_SELL_CONFIRM_SEND_STEP: {
+        defaultMessage: 'Confirm & Send',
+        id: 'TR_SELL_CONFIRM_SEND_STEP',
+    },
+    TR_SELL_SEND_FROM: {
+        defaultMessage: 'Send from',
+        id: 'TR_SELL_SEND_FROM',
+    },
+    TR_SELL_SEND_TO: {
+        defaultMessage: 'Send to {providerName}’s address',
+        id: 'TR_SELL_SEND_TO',
+    },
+    TR_SELL_CONFIRM_ON_TREZOR_SEND: {
+        defaultMessage: 'Confirm on Trezor & Send',
+        id: 'TR_SELL_CONFIRM_ON_TREZOR_SEND',
+    },
+    TR_SELL_BANK_ACCOUNT_INFO: {
+        defaultMessage: 'Bank Account',
+        id: 'TR_SELL_BANK_ACCOUNT_INFO',
+    },
+    TR_SELL_BANK_ACCOUNT: {
+        defaultMessage: 'Your registered bank accounts',
+        id: 'TR_SELL_BANK_ACCOUNT',
+    },
+    TR_SELL_BANK_ACCOUNT_TOOLTIP: {
+        defaultMessage: 'Bank accounts that you registered at your provider',
+        id: 'TR_SELL_BANK_ACCOUNT_TOOLTIP',
+    },
+    TR_SELL_BANK_ACCOUNT_VERIFIED: {
+        defaultMessage: 'verified',
+        id: 'TR_SELL_BANK_ACCOUNT_VERIFIED',
+    },
+    TR_SELL_BANK_ACCOUNT_NOT_VERIFIED: {
+        defaultMessage: 'not verified',
+        id: 'TR_SELL_BANK_ACCOUNT_NOT_VERIFIED',
+    },
+    TR_SELL_ADD_BANK_ACCOUNT: {
+        defaultMessage: 'Register another bank account',
+        id: 'TR_SELL_ADD_BANK_ACCOUNT',
+    },
+    TR_SELL_GO_TO_TRANSACTION: {
+        defaultMessage: 'Proceed',
+        id: 'TR_SELL_GO_TO_TRANSACTION',
     },
     TR_BUY_STATUS_PENDING: {
         defaultMessage: 'Pending',
@@ -739,25 +817,25 @@ const definedMessages = defineMessages({
         id: 'TR_BUY_GET_THIS_OFFER',
         defaultMessage: 'Get this Offer',
     },
-    TR_BUY_OFFER_ERROR_MINIMUM_CRYPTO: {
+    TR_OFFER_ERROR_MINIMUM_CRYPTO: {
         defaultMessage:
             'The chosen amount of {currency} {amount} is lower than the accepted minimum of {currency} {min}.',
-        id: 'TR_BUY_OFFER_ERROR_MINIMUM_CRYPTO',
+        id: 'TR_OFFER_ERROR_MINIMUM_CRYPTO',
     },
-    TR_BUY_OFFER_ERROR_MAXIMUM_CRYPTO: {
+    TR_OFFER_ERROR_MAXIMUM_CRYPTO: {
         defaultMessage:
             'The chosen amount of {currency} {amount} is higher than the accepted maximum of {currency} {max}.',
-        id: 'TR_BUY_OFFER_ERROR_MAXIMUM_CRYPTO',
+        id: 'TR_OFFER_ERROR_MAXIMUM_CRYPTO',
     },
-    TR_BUY_OFFER_ERROR_MINIMUM_FIAT: {
+    TR_OFFER_ERROR_MINIMUM_FIAT: {
         defaultMessage:
             'The chosen amount of {currency} {amount} is lower than the accepted minimum of {currency} {min}.',
-        id: 'TR_BUY_OFFER_ERROR_MINIMUM_FIAT',
+        id: 'TR_OFFER_ERROR_MINIMUM_FIAT',
     },
-    TR_BUY_OFFER_ERROR_MAXIMUM_FIAT: {
+    TR_OFFER_ERROR_MAXIMUM_FIAT: {
         defaultMessage:
             'The chosen amount of {currency} {amount} is higher than the accepted maximum of {currency} {max}.',
-        id: 'TR_BUY_OFFER_ERROR_MAXIMUM_FIAT',
+        id: 'TR_OFFER_ERROR_MAXIMUM_FIAT',
     },
     TR_BUY_LOADING: {
         defaultMessage: 'Loading',

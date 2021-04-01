@@ -73,7 +73,7 @@ export const createQuoteLink = async (request: SellFiatTradeQuoteRequest, accoun
         hash = `qf/${request.country}/${request.fiatCurrency}/${request.fiatStringAmount}/${request.cryptoCurrency}`;
     }
 
-    const params = `offers/${account.symbol}/${account.accountType}/${account.index}/${hash}`;
+    const params = `sell-offers/${account.symbol}/${account.accountType}/${account.index}/${hash}`;
 
     if (isDesktop()) {
         const url = await window.desktopApi?.getHttpReceiverAddress('/sell-redirect');

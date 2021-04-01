@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import invityAPI from '@suite-services/invityAPI';
 import { useActions, useSelector, useDevice, useTranslation } from '@suite-hooks';
 import { useTimer } from '@suite-hooks/useTimeInterval';
-import { SellFiatTrade } from 'invity-api';
+import { BankAccount, SellFiatTrade } from 'invity-api';
 import { processQuotes, createQuoteLink } from '@wallet-utils/coinmarket/sellUtils';
 import * as coinmarketCommonActions from '@wallet-actions/coinmarket/coinmarketCommonActions';
 import * as coinmarketSellActions from '@wallet-actions/coinmarketSellActions';
@@ -27,14 +27,13 @@ export const useOffers = (props: Props) => {
     const [innerAlternativeQuotes, setInnerAlternativeQuotes] = useState<
         SellFiatTrade[] | undefined
     >(alternativeQuotes);
-    const [exchangeStep, setExchangeStep] = useState<SellStep>('BANK_ACCOUNT');
+    const [sellStep, setSellStep] = useState<SellStep>('BANK_ACCOUNT');
     const {
         saveTrade,
         setIsFromRedirect,
         openCoinmarketSellConfirmModal,
         addNotification,
         saveTransactionId,
-        verifyAddress,
         submitRequestForm,
         goto,
         composeAction,
@@ -46,24 +45,13 @@ export const useOffers = (props: Props) => {
         addNotification: notificationActions.addToast,
         saveTransactionId: coinmarketSellActions.saveTransactionId,
         submitRequestForm: coinmarketCommonActions.submitRequestForm,
-        verifyAddress: coinmarketCommonActions.verifyAddress,
         goto: routerActions.goto,
         composeAction: sendFormActions.composeTransaction,
         signAction: sendFormActions.signTransaction,
     });
 
-    const {
-        invityAPIUrl,
-        exchangeCoinInfo,
-        accounts,
-        composed,
-        selectedFee,
-        fees,
-        isFromRedirect,
-    } = useSelector(state => ({
+    const { invityAPIUrl, composed, selectedFee, fees, isFromRedirect } = useSelector(state => ({
         invityAPIUrl: state.suite.settings.debug.invityAPIUrl,
-        exchangeCoinInfo: state.wallet.coinmarket.exchange.exchangeCoinInfo,
-        accounts: state.wallet.accounts,
         composed: state.wallet.coinmarket.composedTransactionInfo.composed,
         selectedFee: state.wallet.coinmarket.composedTransactionInfo.selectedFee,
         fees: state.wallet.fees,
@@ -113,6 +101,30 @@ export const useOffers = (props: Props) => {
         }
     });
 
+    const doSellTrade = async (quote: SellFiatTrade) => {
+        if (!quotesRequest) return;
+        const returnUrl = await createQuoteLink(quotesRequest, account);
+        const response = await invityAPI.doSellTrade({ trade: quote, returnUrl });
+        if (response) {
+            if (
+                response.trade.status === 'LOGIN_REQUEST' ||
+                (response.trade.status === 'SITE_ACTION_REQUEST' && response.tradeForm)
+            ) {
+                submitRequestForm(response.tradeForm?.form);
+            } else {
+                const errorMessage = `[doSellTrade] ${response.trade.status} ${response.trade.error}`;
+                console.log(errorMessage);
+            }
+        } else {
+            const errorMessage = 'No response from the server';
+            console.log(`[doSellTrade] ${errorMessage}`);
+            addNotification({
+                type: 'error',
+                error: errorMessage,
+            });
+        }
+    };
+
     const selectQuote = async (quote: SellFiatTrade) => {
         const provider =
             sellInfo?.providerInfos && quote.exchange
@@ -123,26 +135,7 @@ export const useOffers = (props: Props) => {
             if (result) {
                 // empty quoteId means the partner requests login first, requestTrade to get login screen
                 if (!quote.quoteId) {
-                    const returnUrl = await createQuoteLink(quotesRequest, account);
-                    const response = await invityAPI.doSellTrade({ trade: quote, returnUrl });
-                    if (response) {
-                        if (
-                            response.trade.status === 'LOGIN_REQUEST' ||
-                            (response.trade.status === 'SITE_ACTION_REQUEST' && response.tradeForm)
-                        ) {
-                            submitRequestForm(response.tradeForm?.form);
-                        } else {
-                            const errorMessage = `[doSellTrade] ${response.trade.status} ${response.trade.error}`;
-                            console.log(errorMessage);
-                        }
-                    } else {
-                        const errorMessage = 'No response from the server';
-                        console.log(`[doSellTrade] ${errorMessage}`);
-                        addNotification({
-                            type: 'error',
-                            error: errorMessage,
-                        });
-                    }
+                    doSellTrade(quote);
                 } else {
                     setSelectedQuote(quote);
                     timer.stop();
@@ -151,11 +144,11 @@ export const useOffers = (props: Props) => {
         }
     };
 
-    const confirmTrade = async (address: string, extraField?: string) => {
-        // TODO complete
+    const confirmTrade = async (bankAccount: BankAccount) => {
         if (!selectedQuote) return;
         setCallInProgress(true);
-        const response = await invityAPI.doSellConfirm(selectedQuote);
+        const quote = { ...selectQuote, bankAccount };
+        const response = await invityAPI.doSellConfirm(quote);
         if (!response) {
             addNotification({
                 type: 'error',
@@ -167,9 +160,16 @@ export const useOffers = (props: Props) => {
                 error: response.error || 'Invalid response from the server',
             });
         } else {
-            setExchangeStep('SEND_TRANSACTION');
+            setSellStep('SEND_TRANSACTION');
             setSelectedQuote(response);
         }
+        setCallInProgress(false);
+    };
+
+    const addBankAccount = async () => {
+        if (!selectedQuote) return;
+        setCallInProgress(true);
+        await doSellTrade(selectedQuote);
         setCallInProgress(false);
     };
 
@@ -242,7 +242,7 @@ export const useOffers = (props: Props) => {
             if (result) {
                 await saveTrade(selectedQuote, account, new Date().toISOString());
                 await saveTransactionId(selectedQuote.orderId);
-                goto('wallet-coinmarket-exchange-detail', {
+                goto('wallet-coinmarket-sell-detail', {
                     symbol: account.symbol,
                     accountIndex: account.index,
                     accountType: account.accountType,
@@ -260,12 +260,15 @@ export const useOffers = (props: Props) => {
         sendTransaction,
         callInProgress,
         selectedQuote,
-        verifyAddress,
         device,
         saveTrade,
+        confirmTrade,
+        addBankAccount,
         quotesRequest,
         quotes: innerQuotes,
         alternativeQuotes: innerAlternativeQuotes,
+        sellStep,
+        setSellStep,
         selectQuote,
         account,
         REFETCH_INTERVAL_IN_SECONDS,
